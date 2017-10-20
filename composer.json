@@ -1,8 +1,8 @@
 {
     "name": "dbwebb/dbwebb-cli",
     "type": "utility",
-    "description": "dbwebb CLI tool.",
-    "keywords": ["boilerplate", "framework", "mvc", "micro", "education"],
+    "description": "dbwebb cli tool for dbwebb courses and training material.",
+    "keywords": ["cli", "bash", "education", "training"],
     "homepage": "https://dbwebb.se/dbwebb-cli",
     "license": "MIT",
     "authors": [
