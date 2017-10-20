@@ -138,8 +138,18 @@ config_read()
     local configDir="$DBW_CONFIG_DIR"
     local configFile="$DBW_CONFIG_DIR/config"
 
-    # shellcheck source=/dev/null
-    [[ -f $configFile ]] && . "$configFile"
+    if [[ -f $configFile ]]; then
+        while IFS='= ' read lhs rhs
+        do
+            if [[ ! $lhs =~ ^\ *# && -n $lhs ]]; then
+                rhs="${rhs%%\#*}"    # Del in line right comments
+                rhs="${rhs%%*( )}"   # Del trailing spaces
+                rhs="${rhs%\"*}"     # Del opening string quotes 
+                rhs="${rhs#\"*}"     # Del closing string quotes 
+                export "$lhs"="$rhs"
+            fi
+        done < "$configFile"
+    fi
 }
 
 
@@ -147,7 +157,7 @@ config_read()
 ##
 # Create or update the configuration.
 #
-config_create()
+config_create_update()
 {
     local configDir="$DBW_CONFIG_DIR"
     local configFile="$DBW_CONFIG_DIR/config"
@@ -156,6 +166,8 @@ config_create()
         || fail "Could not create configuration dir: '$configDir'"
     touch "$configFile" \
         || fail "Could not create configuration file: '$configFile'"
+
+    echo "$configDir"
     ls -l "$configDir"
 }
 
@@ -182,20 +194,19 @@ check_command_version()
 ##
 # Check details on local environment
 #
-# @param string $1 tools to check, separated with space.
-#
 check_environment()
 {
-    local red
-    local normal
-    local tools=$1
-
-    red=$(tput setaf 1)
-    normal=$(tput sgr0)
+    local configFile="$DBW_CONFIG_DIR/config"
 
     printf "dbwebb utilities."
     printf "\n------------------------------------\n"
     check_command_version "dbwebb3" ""  "| cut -d ' ' -f 1"
+    printf "\n"
+    
+    printf "dbwebb environment."
+    printf "\n------------------------------------\n"
+    [[ -f $configFile ]] && \
+        printf " Configuration file is: %s\n" "$configFile"
     printf "\n"
 
     printf "Details on installed utilities."
@@ -222,7 +233,7 @@ check_environment()
 #
 app_check()
 {
-    check_environment "bash wget curl rsync git make"
+    check_environment
 }
 
 
@@ -232,7 +243,7 @@ app_check()
 #
 app_config()
 {
-    config_create
+    config_create_update
 }
 
 
@@ -260,6 +271,8 @@ app_selfupdate()
 #
 app_develop()
 {
+    config_read
+    echo $DBW_HOST
     :
 }
 

@@ -7,9 +7,10 @@ v3.0.0 (to be released)
 * To be defined.
 
 
-v2.9.1* (2017-10-20)
+v2.9.1 (2017-10-20)
 ---------------------------------
 
+* New format of configuration file, do not use source.
 * Fix initial dbwebb check.
 
 
