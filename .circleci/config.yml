@@ -35,3 +35,9 @@ jobs:
         
       # run tests!
       - run: make test
+
+notify:
+  webhooks:
+    # A list of hook hashes, containing the url field
+    # gitter hook
+    - url: https://webhooks.gitter.im/e/d5ca25319b3988964bca
