@@ -16,7 +16,7 @@ readonly DBW_CONFIG_DIR=${DBW_CONFIG_DIR:-"$HOME/.dbwebb"}
 #
 version()
 {
-    printf "v2.9.0 (2017-10-20)\\n"
+    printf "v2.9.2 (2017-10-20)\\n"
 }
 
 
@@ -139,7 +139,7 @@ config_read()
     local configFile="$DBW_CONFIG_DIR/config"
 
     if [[ -f $configFile ]]; then
-        while IFS='= ' read lhs rhs
+        while IFS='= ' read -r lhs rhs
         do
             if [[ ! $lhs =~ ^\ *# && -n $lhs ]]; then
                 rhs="${rhs%%\#*}"    # Del in line right comments
@@ -185,8 +185,8 @@ check_command_version()
     local optionVersion=${2:-"--version"}
     local currentVersion=
 
-    currentVersion="$( eval $1 $optionVersion $3 2>&1 )"
-    printf " %-10s%-10s (%s)\\n" "$1" "$currentVersion" "$( which $1 )"
+    currentVersion="$( eval "$1" "$optionVersion" "$3" 2>&1 )"
+    printf " %-10s%-10s (%s)\\n" "$1" "$currentVersion" "$( which "$1" )"
 }
 
 
@@ -199,31 +199,31 @@ check_environment()
     local configFile="$DBW_CONFIG_DIR/config"
 
     printf "dbwebb utilities."
-    printf "\n------------------------------------\n"
+    printf "\\n------------------------------------\\n"
     check_command_version "dbwebb3" ""  "| cut -d ' ' -f 1"
-    printf "\n"
+    printf "\\n"
     
     printf "dbwebb environment."
-    printf "\n------------------------------------\n"
+    printf "\\n------------------------------------\\n"
     [[ -f $configFile ]] && \
-        printf " Configuration file is: %s\n" "$configFile"
-    printf "\n"
+        printf " Configuration file is: %s\\n" "$configFile"
+    printf "\\n"
 
     printf "Details on installed utilities."
-    printf "\n------------------------------------\n"
+    printf "\\n------------------------------------\\n"
     check_command_version "bash"  ""   "| head -1 | cut -d ' ' -f 4"
     check_command_version "ssh"   "-V" "| cut -d ' ' -f 1"
     check_command_version "rsync" ""   "| head -1 | cut -d ' ' -f 4"
     check_command_version "wget"  ""   "| head -1 | cut -d ' ' -f 3"
     check_command_version "curl"  ""   "| head -1 | cut -d ' ' -f 2"
-    printf "\n"
+    printf "\\n"
 
     printf "Details on the environment."
-    printf "\n------------------------------------"
-    printf "\n Operatingsystem:    %s" "$( uname -a )"
-    printf "\n Local user:         %s" "$USER"
-    printf "\n Local homedir:      %s" "$HOME"
-    printf "\n"
+    printf "\\n------------------------------------"
+    printf "\\n Operatingsystem:    %s" "$( uname -a )"
+    printf "\\n Local user:         %s" "$USER"
+    printf "\\n Local homedir:      %s" "$HOME"
+    printf "\\n"
 }
 
 
@@ -272,7 +272,7 @@ app_selfupdate()
 app_develop()
 {
     config_read
-    echo $DBW_HOST
+    echo "$DBW_HOST"
     :
 }
 

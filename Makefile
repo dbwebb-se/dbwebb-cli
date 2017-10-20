@@ -154,8 +154,12 @@ update:
 
 # target: tag-prepare        - Prepare to tag new version.
 .PHONY: tag-prepare
-tag-prepare: release-app
+tag-prepare: test release-app
 	@$(call HELPTEXT,$@)
+	src/dbwebb.bash --version
+	grep '^v.' REVISION.md | head -1
+	git tag | tail -1
+	git status
 
 
 

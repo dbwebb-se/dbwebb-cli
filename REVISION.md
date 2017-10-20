@@ -1,10 +1,17 @@
 Revision history
 =================================
 
-v3.0.0 (to be released)
+3.0.0 (to be released)
 ---------------------------------
 
 * To be defined.
+
+
+v2.9.2 (2017-10-20)
+---------------------------------
+
+* Align version number and add tag-prepare.
+* Make pass test.
 
 
 v2.9.1 (2017-10-20)
