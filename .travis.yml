@@ -3,7 +3,7 @@ language: php
 
 
 before_script:
-    - make install install-dev
+    - make install-dev
 
 
 script:
