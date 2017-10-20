@@ -17,7 +17,7 @@
 TARGET="https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbwebb"
 PATH1="/usr/local/bin"
 PATH2="/usr/bin"
-WHERE="$PATH1/anax"
+WHERE="$PATH1/dbwebb3"
 TMP="/tmp/$$"
 
 ECHO="echo -e"
