@@ -162,6 +162,24 @@ config_create()
 
 
 ##
+# Check details on a command and display its version.
+#
+# @param string $1 command to check.
+# @param string $2 optionally extra string to extract version number.
+# @param string $3 optionally extra string to extract version number.
+#
+check_command_version()
+{
+    local optionVersion=${2:-"--version"}
+    local currentVersion=
+
+    currentVersion="$( eval $1 $optionVersion $3 2>&1 )"
+    printf " %-10s%-10s (%s)\\n" "$1" "$currentVersion" "$( which $1 )"
+}
+
+
+
+##
 # Check details on local environment
 #
 # @param string $1 tools to check, separated with space.
@@ -175,19 +193,26 @@ check_environment()
     red=$(tput setaf 1)
     normal=$(tput sgr0)
 
-    echo "### Checking system" && uname -a
-    for tool in $tools; do
-        printf "\\n### Checking %s\\n" "$tool"
-        which "$tool" && "$tool" --version \
-            || printf "%s %s\\n" "${red}[MISSING]${normal}" "$tool"
-    done
+    printf "dbwebb utilities."
+    printf "\n------------------------------------\n"
+    check_command_version "dbwebb3" ""  "| cut -d ' ' -f 1"
+    printf "\n"
 
-    printf "\\n### Checking config dir '%s'\\n" "$DBW_CONFIG_DIR"
-    if [[ -d $DBW_CONFIG_DIR ]]; then
-        ls -l "$DBW_CONFIG_DIR"
-    else
-        printf "%s config directory, but you can do without it.\\n" "${red}[MISSING]${normal} "
-    fi
+    printf "Details on installed utilities."
+    printf "\n------------------------------------\n"
+    check_command_version "bash"  ""   "| head -1 | cut -d ' ' -f 4"
+    check_command_version "ssh"   "-V" "| cut -d ' ' -f 1"
+    check_command_version "rsync" ""   "| head -1 | cut -d ' ' -f 4"
+    check_command_version "wget"  ""   "| head -1 | cut -d ' ' -f 3"
+    check_command_version "curl"  ""   "| head -1 | cut -d ' ' -f 2"
+    printf "\n"
+
+    printf "Details on the environment."
+    printf "\n------------------------------------"
+    printf "\n Operatingsystem:    %s" "$( uname -a )"
+    printf "\n Local user:         %s" "$USER"
+    printf "\n Local homedir:      %s" "$HOME"
+    printf "\n"
 }
 
 

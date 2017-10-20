@@ -17,7 +17,8 @@
 TARGET="https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbwebb"
 PATH1="/usr/local/bin"
 PATH2="/usr/bin"
-WHERE="$PATH1/dbwebb3"
+APP_NAME="dbwebb3"
+WHERE="$PATH1/$APP_NAME"
 TMP="/tmp/$$"
 
 ECHO="echo -e"
@@ -127,5 +128,5 @@ $ECHO "$MSG_DONE"
 # Done
 #
 $ECHO "$MSG_DOING Done with success!"
-$ECHO "Execute 'anax --help' to get an overview of the command."
+$ECHO "Execute '$APP_NAME --help' to get an overview of the command."
 $ECHO "Read the manual: https://dbwebb.se/dbwebb-cli"
