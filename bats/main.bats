@@ -5,7 +5,7 @@ load test_helper
 @test "no arguments prints missing command" {
     run src/dbwebb.bash
     [ $status -eq 1 ]
-    [ $(expr "${lines[0]}" : "Missing command.") -ne 0 ]
+    [ $(expr "${lines[0]}" : "Missing option or command.") -ne 0 ]
 }
 
 @test "-v show version" {
