@@ -1,0 +1,22 @@
+{
+    "name": "dbwebb/dbwebb-cli",
+    "type": "utility",
+    "description": "dbwebb CLI tool.",
+    "keywords": ["boilerplate", "framework", "mvc", "micro", "education"],
+    "homepage": "https://dbwebb.se/dbwebb-cli",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikael Roos",
+            "email": "mos@dbwebb.se",
+            "homepage": "https://dbwebb.se",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/dbwebb-se/dbwebb-cli/issues"
+    },
+    "bin": [
+        "release/latest/dbwebb"
+    ]
+}
