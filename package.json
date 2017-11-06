@@ -1,6 +1,6 @@
 {
   "name": "@dbwebb/dbwebb-cli",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "description": "A CLI client to work with dbwebb courses, built in bash.",
   "main": "null",
   "scripts": {
