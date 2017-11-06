@@ -7,7 +7,7 @@
 # Globals (prefer none)
 # 
 readonly APP_NAME="dbwebb3"
-readonly DBW_CONFIG_DIR=${DBW_CONFIG_DIR:-"$HOME/.dbwebb"}
+readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 
 
 
@@ -192,6 +192,24 @@ check_command_version()
 
 
 ##
+# Check details on an environment variable.
+#
+# @param string $1 variable to check.
+#
+check_environment_variable()
+{
+    local isSet=${!1+x}
+
+    if [[ $isSet ]]; then
+        printf " \$%s=%s\\n" "${1}" "${!1}"
+    else
+        printf " \$%s is not set\\n" "${1}"
+    fi
+}
+
+
+
+##
 # Check details on local environment
 #
 check_environment()
@@ -205,6 +223,8 @@ check_environment()
     
     printf "dbwebb environment."
     printf "\\n------------------------------------\\n"
+    check_environment_variable "DBWEBB_CONFIG_DIR"
+    check_environment_variable "DBW_CONFIG_DIR"
     [[ -f $configFile ]] && \
         printf " Configuration file is: %s\\n" "$configFile"
     printf "\\n"
@@ -212,10 +232,11 @@ check_environment()
     printf "Details on installed utilities."
     printf "\\n------------------------------------\\n"
     check_command_version "bash"  ""   "| head -1 | cut -d ' ' -f 4"
-    check_command_version "ssh"   "-V" "| cut -d ' ' -f 1"
-    check_command_version "rsync" ""   "| head -1 | cut -d ' ' -f 4"
-    check_command_version "wget"  ""   "| head -1 | cut -d ' ' -f 3"
     check_command_version "curl"  ""   "| head -1 | cut -d ' ' -f 2"
+    check_command_version "make"  ""   "| head -1"
+    check_command_version "rsync" ""   "| head -1 | cut -d ' ' -f 4"
+    check_command_version "ssh"   "-V" "| cut -d ' ' -f 1"
+    check_command_version "wget"  ""   "| head -1 | cut -d ' ' -f 3"
     printf "\\n"
 
     printf "Details on the environment."

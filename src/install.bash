@@ -49,7 +49,7 @@ checkTool "curl"      "using your packet manager."
 checkTool "wget"      "using your packet manager."
 checkTool "rsync"     "using your packet manager."
 checkTool "git"       "https://dbwebb.se/labbmiljo/git"
-checkTool "make"      "https://dbwebb.se/labbmiljo/make"
+#checkTool "make"      "https://dbwebb.se/labbmiljo/make"
 
 $ECHO "\\n$MSG_DONE"
 

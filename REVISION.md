@@ -1,10 +1,11 @@
 Revision history
 =================================
 
-3.0.0 (to be released)
+
+v2.9.3* (2017-11-06)
 ---------------------------------
 
-* To be defined.
+* Add details on environment variabels in dbwebb check.
 
 
 v2.9.2 (2017-10-20)

@@ -12,19 +12,47 @@ This is development of version 3 for dbwebb-cli, a complete rewrite of the codeb
 
 
 
+Documentation
+------------------
+
+There is documentation on [dbwebb.se/dbwebb-cli](https://dbwebb.se/dbwebb-cli) (swedish only).
+
+Or use the built-in `dbwebb help <command>` which is in english.
+
+
+
 Install
 ------------------
 
-Download and install.
+Download and install using installation program or using composer.
+
+
+
+### Installation program
+
+Download and install to `/usr/local/bin` or `/usr/bin`. Use `sudo` if needed.
+
+Using curl for download.
 
 ```bash
 bash -c "$(curl -s https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install)"
 ```
 
-Install using composer.
+Using wget for download.
+
+```bash
+bash -c "$(wget -qO- https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install)"
+```
+
+
+
+### Composer
+
+Install using composer as part of you development environment.
 
 ```bash
 composer require dbwebb/dbwebb-cli
+vendor/bin/dbwebb --version
 ```
 
 
