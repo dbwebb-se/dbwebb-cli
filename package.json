@@ -7,7 +7,7 @@
     "test": "null"
   },
   "bin": {
-    "dbwebb3": "release/latest/dbwebb"
+    "dbwebb": "release/latest/dbwebb"
   },
   "repository": {
     "type": "git",

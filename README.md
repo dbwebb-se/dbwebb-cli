@@ -64,7 +64,7 @@ Install [`@dbwebb/dbwebb-cli`](https://www.npmjs.com/package/@dbwebb/dbwebb-cli)
 
 ```bash
 npm install @dbwebb/dbwebb-cli
-node_modules/.bin/dbwebb3 --version
+node_modules/.bin/dbwebb --version
 ```
 
 
