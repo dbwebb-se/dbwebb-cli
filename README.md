@@ -45,6 +45,15 @@ Using wget for download.
 bash -c "$(wget -qO- https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install)"
 ```
 
+The executable will be installed as `dbwebb3`.
+
+```bash
+$ which dbwebb3
+/usr/local/bin/dbwebb3
+$ dbwebb3 --version
+v2.9.3 (2017-11-06)
+```
+
 
 
 ### Composer
