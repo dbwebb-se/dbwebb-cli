@@ -1,0 +1,23 @@
+{
+  "name": "@dbwebb/dbwebb-cli",
+  "version": "2.9.2",
+  "description": "A CLI client to work with dbwebb courses, built in bash.",
+  "main": "null",
+  "scripts": {
+    "test": "null"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbwebb-se/dbwebb-cli.git"
+  },
+  "keywords": [
+    "education",
+    "bash"
+  ],
+  "author": "Mikael Roos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dbwebb-se/dbwebb-cli/issues"
+  },
+  "homepage": "https://github.com/dbwebb-se/dbwebb-cli#readme"
+}
