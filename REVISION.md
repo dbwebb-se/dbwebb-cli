@@ -2,9 +2,10 @@ Revision history
 =================================
 
 
-v2.9.3* (2017-11-06)
+v2.9.3 (2017-11-06)
 ---------------------------------
 
+* Add as npm package.
 * Add help command with help details for each command.
 * Add details on environment variabels in dbwebb check.
 

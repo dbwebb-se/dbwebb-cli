@@ -6,6 +6,9 @@
   "scripts": {
     "test": "null"
   },
+  "bin": {
+    "dbwebb3": "release/latest/dbwebb"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dbwebb-se/dbwebb-cli.git"
