@@ -29,16 +29,19 @@ usage()
     printf "\
 Utility to work with dbwebb courses. Read more on:
 https://dbwebb.se/dbwebb-cli/
-Usage: %s [options] <command> [arguments]
+
+Usage:
+ %s [options] [command] [arguments]
 
 Command:
  check                    Check and display details on local environment.
  config                   Create/update configuration file.
+ help [command]           Show general help or detailed help on command.
  selfupdate               Update to latest version.
 
 Options:
- --help, -h          Show info on how to use it.
- --version, -v       Show info on how to use it.
+ --help, -h          Show info on usage.
+ --version, -v       Show details on version.
  --force, -f         Force potential dangerous operation.
 " "$APP_NAME"
 }
@@ -56,7 +59,7 @@ bad_usage()
 
     printf "\
 For an overview of the command, execute:
-%s --help
+%s help
 " "$APP_NAME"
 }
 
@@ -260,11 +263,113 @@ app_check()
 
 
 ##
+# Help for the command.
+#
+app_help_check()
+{
+    printf "\
+Usage:
+ %s
+
+Help:
+ Check and print out details on the current environment and
+ configuration used.
+
+ $ %s check
+
+ Use this as a base for debugging.
+
+Read more:
+ https://dbwebb.se/dbwebb-cli/$1
+" "$1" "$APP_NAME"
+}
+
+
+
+##
 # Create/update the configuration directory.
 #
 app_config()
 {
     config_create_update
+}
+
+
+
+##
+# Help for the command.
+#
+app_help_config()
+{
+    printf "\
+Usage:
+ %s
+
+Help:
+ Create or update the configuration.
+
+ $ %s config
+
+ The configuration is stored in the directory \$HOME/.dbwebb and
+ its location can be overridden setting the environment variable
+ \$DBWEBB_CONFIG_DIR.
+
+ You can check details on the current configuration through the
+ 'check' command.
+
+Read more:
+ https://dbwebb.se/dbwebb-cli/$1
+" "$1" "$APP_NAME"
+}
+
+
+
+##
+# Show general help information or detailed help on a command.
+#
+app_help()
+{
+    set -- "${ARGS[@]}"
+
+    (( $# > 1 )) \
+        && fail "This command only takes max one extra argument, you supplied $#."
+
+    if (( $# == 0 )); then
+        usage
+        return
+    fi
+
+    if type -t app_help_"$1" | grep -q function; then
+        app_help_"$1" "$1"
+        exit 0
+    else
+        bad_usage "There is no extra help on command '$1'."
+        exit 1
+    fi
+}
+
+
+
+##
+# Help for the command.
+#
+app_help_help()
+{
+    printf "\
+Usage:
+ %s [command_name]
+
+Command:
+ command_name       The command to display help for.
+
+Help:
+ The help command displays help for a given command.
+
+ $ %s help config
+
+Read more:
+ https://dbwebb.se/dbwebb-cli/$1
+" "$1" "$APP_NAME"
 }
 
 
@@ -283,6 +388,31 @@ app_selfupdate()
     fi
     bash < "$tmp"
     rm -f "$tmp"
+}
+
+
+
+##
+# Help for the command.
+#
+app_help_selfupdate()
+{
+    printf "\
+Usage:
+ %s
+
+Help:
+ Update the utility to the latest version through an automated
+ installation script.
+
+ $ %s selfupdate
+
+ Some pre-conditions are checked and warned, but they do not
+ hinder an installation.
+
+Read more:
+ https://dbwebb.se/dbwebb-cli/$1
+" "$1" "$APP_NAME"
 }
 
 
@@ -318,12 +448,12 @@ main()
             ;;
 
             --verbose)
-                readonly OPTION_VERBOSE=true
+                readonly OPTION_VERBOSE=1
                 shift
             ;;
 
             --silent)
-                readonly OPTION_SILENT=true
+                readonly OPTION_SILENT=1
                 shift
             ;;
 
@@ -335,8 +465,13 @@ main()
             check       | \
             config      | \
             develop     | \
+            help        | \
             selfupdate    )
-                COMMAND=$1
+                if [[ ! $COMMAND ]]; then
+                    COMMAND=$1
+                else
+                    ARGS+=("$1")
+                fi
                 shift
             ;;
 
@@ -347,7 +482,7 @@ main()
 
             *)
                 if [[ ! $COMMAND ]]; then
-                    bad_usage "Unknown command/argument '$1'."
+                    bad_usage "Unknown command '$1'."
                     exit 1
                 fi
                 ARGS+=("$1")
