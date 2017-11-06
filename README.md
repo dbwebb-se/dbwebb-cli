@@ -18,14 +18,14 @@ Documentation
 
 There is documentation on [dbwebb.se/dbwebb-cli](https://dbwebb.se/dbwebb-cli) (swedish only).
 
-Or use the built-in `dbwebb help <command>` which is in english.
+Or use the built-in `dbwebb help <command>`.
 
 
 
 Install
 ------------------
 
-Download and install using installation program or using composer.
+Download and install using installation program, composer or npm.
 
 
 
@@ -49,11 +49,22 @@ bash -c "$(wget -qO- https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/mast
 
 ### Composer
 
-Install using composer as part of you development environment.
+Install [`dbwebb/dbwebb-cli`](https://packagist.org/packages/dbwebb/dbwebb-cli) using composer as part of you development environment.
 
 ```bash
 composer require dbwebb/dbwebb-cli
 vendor/bin/dbwebb --version
+```
+
+
+
+### NPM
+
+Install [`@dbwebb/dbwebb-cli`](https://www.npmjs.com/package/@dbwebb/dbwebb-cli) using npm as part of you development environment.
+
+```bash
+npm install @dbwebb/dbwebb-cli
+node_modules/.bin/dbwebb3 --version
 ```
 
 
