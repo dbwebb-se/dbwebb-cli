@@ -15,7 +15,6 @@ load test_helper
     # Check where config is
     [[ "$output" == *"\$DBWEBB_CONFIG_DIR=$DBWEBB_CONFIG_DIR"* ]]
     [[ "$output" == *"\$DBW_CONFIG_DIR=$DBWEBB_CONFIG_DIR"* ]]
-    [[ "$output" == *"Configuration file is: $DBWEBB_CONFIG_DIR/config"* ]]
 }
 
 @test "command check has detailed help" {

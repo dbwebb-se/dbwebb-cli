@@ -16,7 +16,7 @@ readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 #
 version()
 {
-    printf "v2.9.4 (2017-11-07)\\n"
+    printf "v2.9.4* (2017-11-07)\\n"
 }
 
 
@@ -193,7 +193,7 @@ check_command_version()
     local currentVersion=
 
     currentVersion="$( eval "$1" "$optionVersion" "$3" 2>&1 )"
-    printf " %-10s%-10s (%s)\\n" "$1" "$currentVersion" "$( which "$1" )"
+    printf "%-10s%-10s (%s)\\n" "$1" "$currentVersion" "$( which "$1" )"
 }
 
 
@@ -208,9 +208,9 @@ check_environment_variable()
     local isSet=${!1+x}
 
     if [[ $isSet ]]; then
-        printf " \$%s=%s\\n" "${1}" "${!1}"
+        printf "\$%s=%s\\n" "${1}" "${!1}"
     else
-        printf " \$%s is not set\\n" "${1}"
+        printf "\$%s is not set\\n" "${1}"
     fi
 }
 
@@ -233,7 +233,7 @@ check_environment()
     check_environment_variable "DBWEBB_CONFIG_DIR"
     check_environment_variable "DBW_CONFIG_DIR"
     [[ -f $configFile ]] && \
-        printf " Configuration file is: %s\\n" "$configFile"
+        printf "Configuration file is: %s\\n" "$configFile"
     printf "\\n"
 
     printf "Details on installed utilities."
@@ -248,9 +248,9 @@ check_environment()
 
     printf "Details on the environment."
     printf "\\n------------------------------------"
-    printf "\\n Operatingsystem:    %s" "$( uname -a )"
-    printf "\\n Local user:         %s" "$USER"
-    printf "\\n Local homedir:      %s" "$HOME"
+    printf "\\nOperatingsystem:    %s" "$( uname -a )"
+    printf "\\nLocal user:         %s" "$USER"
+    printf "\\nLocal homedir:      %s" "$HOME"
     printf "\\n"
 }
 
