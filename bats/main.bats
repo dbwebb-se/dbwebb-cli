@@ -1,21 +1,23 @@
 #!/usr/bin/env bats
-
+#
+# Tests for main script.
+#
 load test_helper
 
-@test "no arguments prints missing command" {
+@test "main no arguments prints missing command" {
     run src/dbwebb.bash
-    [ $status -eq 1 ]
-    [ $(expr "${lines[0]}" : "Missing option or command.") -ne 0 ]
+    (( $status == 1 ))
+    [[ "${lines[0]}" = "Missing option or command." ]]
 }
 
-@test "-v show version" {
+@test "main -v, --version show version" {
+    local versionNumber="v[0-9][0-9.]*"
+
     run src/dbwebb.bash -v
-    [ $status -eq 0 ]
-    [ $(expr "$output" : "v[0-9][0-9.]*") -ne 0 ]
-}
+    (( $status == 0 ))
+    [[ $( expr "$output" : "$versionNumber" ) ]]
 
-@test "--version show version" {
     run src/dbwebb.bash --version
-    [ $status -eq 0 ]
-    [ $(expr "$output" : "v[0-9][0-9.]*") -ne 0 ]
+    (( $status == 0 ))
+    [[ $( expr "$output" : "$versionNumber" ) ]]
 }

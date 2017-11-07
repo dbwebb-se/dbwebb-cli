@@ -2,9 +2,12 @@ Revision history
 =================================
 
 
-v2.9.4* (2017-11-06)
+v2.9.4 (2017-11-07)
 ---------------------------------
 
+* Rewrite command selfupdate code to make it testable.
+* Update installation code to make it testable.
+* Add testcases for all commands.
 * README to say how to install using npm.
 
 

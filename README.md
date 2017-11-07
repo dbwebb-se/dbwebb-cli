@@ -31,7 +31,7 @@ Download and install using installation program, composer or npm.
 
 ### Installation program
 
-Download and install to `/usr/local/bin` or `/usr/bin`. Use `sudo` if needed.
+Download and install to `/usr/local/bin` or `/usr/bin`. Use `sudo` if needed. The executable will be installed as `dbwebb3` (for now).
 
 Using curl for download.
 
@@ -45,7 +45,7 @@ Using wget for download.
 bash -c "$(wget -qO- https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install)"
 ```
 
-The executable will be installed as `dbwebb3`.
+Check where its installed and its version.
 
 ```bash
 $ which dbwebb3
