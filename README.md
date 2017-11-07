@@ -45,13 +45,11 @@ Using wget for download.
 bash -c "$(wget -qO- https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install)"
 ```
 
-Check where its installed and its version.
+Check where its installed and its version, just to make sure it works.
 
 ```bash
-$ which dbwebb3
-/usr/local/bin/dbwebb3
-$ dbwebb3 --version
-v2.9.3 (2017-11-06)
+which dbwebb3
+dbwebb3 --version
 ```
 
 
