@@ -5,6 +5,12 @@ Revision history
 v2.9.5* (2017-11-07)
 ---------------------------------
 
+* TODO add code coverage to CI.
+* TODO add code coverage.
+* TODO finalize and cleanup selfupdate.
+* TODO installation phase checksum sha1/md5.
+* TODO installation.bash support both curl/wget.
+
 * Make clean before make test.
 
 
