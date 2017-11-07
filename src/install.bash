@@ -14,8 +14,8 @@
 #
 # Basic settings
 #
-TARGET="https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbwebb"
-PATH1="/usr/local/bin"
+SOURCE="${DBWEBB_INSTALL_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbwebb}"
+PATH1="${DBWEBB_INSTALL_TARGET:-/usr/local/bin}"
 PATH2="/usr/bin"
 APP_NAME="dbwebb3"
 WHERE="$PATH1/$APP_NAME"
@@ -38,6 +38,7 @@ MSG_FAILED="\\033[0;37;41m[FAILED]\\033[0m"
 function checkTool() {
     $ECHON "$1 "
     if ! hash "$1" 2> /dev/null; then
+        # TODO Issue warning, not failed
         $ECHO "\\n$MSG_FAILED Missing $1, install it $2"
         #exit -1
     fi
@@ -59,12 +60,15 @@ $ECHO "\\n$MSG_DONE"
 # Download
 #
 $ECHO "$MSG_DOING Downloading dbwebb-cli..."
+$ECHO "$SOURCE"
 
-if ! wget -qO $TMP $TARGET; then
+# TODO support both wget and curl
+#if ! wget -qO "$TMP" "$SOURCE"; then
+if ! curl --silent --output "$TMP" "$SOURCE"; then
     rm -f $TMP
     $ECHO "$MSG_FAILED downloading dbwebb-cli."
     $ECHO "I could not download the script from GitHub."
-    $ECHO "Failed to access: $TARGET"
+    $ECHO "Failed to access: $SOURCE"
     exit 1
 fi
 
@@ -80,12 +84,12 @@ $ECHO "$MSG_DONE"
 $ECHO "$MSG_DOING Installing dbwebb-cli..."
 
 if [[ ! -d $PATH1 ]]; then
-    WHERE="$PATH2/dbwebb"
+    WHERE="$PATH2/$APP_NAME"
 fi
 
-$ECHO "Installing into '$WHERE'."
+$ECHO "Installing '$APP_NAME' into '$WHERE'."
 
-if ! install -v -m 0755 $TMP $WHERE; then
+if ! install -v -m 0755 "$TMP" "$WHERE"; then
     rm $TMP
     $ECHO "$MSG_FAILED installing into '$WHERE'."
     $ECHO "Try re-run the installation-command as root using 'sudo'."
@@ -114,7 +118,7 @@ $ECHO "$MSG_DONE"
 #
 $ECHO "$MSG_DOING Check what version we have..."
 
-if ! anax --version; then
+if ! "$WHERE" --version; then
     $ECHO "$MSG_FAILED checking the version of dbwebb-cli."
     $ECHO "Try re-running the installation script or post the output of the installation procedure to the forum and ask for help."
     exit 1
