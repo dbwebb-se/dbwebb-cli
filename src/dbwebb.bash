@@ -16,7 +16,7 @@ readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 #
 version()
 {
-    printf "v2.9.3 (2017-11-06)\\n"
+    printf "v2.9.3* (2017-11-06)\\n"
 }
 
 
@@ -40,9 +40,12 @@ Command:
  selfupdate               Update to latest version.
 
 Options:
+ --dry               Run dry for test, limit what actually is performed.
+ --force             Force potential dangerous operation.
  --help, -h          Show info on usage.
+ --source <source>   Some commands use source as alternate source.
+ --target <target>   Some commands use target as alternate target.
  --version, -v       Show details on version.
- --force, -f         Force potential dangerous operation.
 " "$APP_NAME"
 }
 
@@ -89,7 +92,8 @@ fail()
 #
 # @param string $1 the command to check.
 #
-function has_command() {
+has_command()
+{
     if ! hash "$1" 2> /dev/null; then
         return 1
     fi
@@ -253,6 +257,64 @@ check_environment()
 
 
 ##
+# Download external file and save it locally.
+#
+# @param string $1 url to download from.
+# @param string $2 filename to save in.
+#
+download_file()
+{
+    local optionSilent=
+
+    if has_command curl; then
+        [[ ! $OPTION_VERBOSE ]] && optionSilent="--silent"
+        [[ $OPTION_VERBOSE ]] && printf "Curl: %s\\n" "$1"
+
+        if ! curl --fail --output "$2" $optionSilent "$1"; then
+            rm -f "$2"
+            fail "Curl: $1"
+        fi
+    elif has_command wget; then
+        :
+    else
+        fail "Neither curl or wget seems to be installed on this system. Install any of them."
+    fi
+}
+
+
+
+##
+# Download external file and verify using hash. The hash-files should
+# be named with the extension .sha1 or .md5. The downloaded file is not
+# removed, thats the callers responsibility.
+#
+# @param string $1 url to download from.
+# @param string $2 filename to save in.
+#
+download_file_verify_hash()
+{
+    local url="${OPTION_SOURCE:-$1}"
+    local file="$2"
+
+    [[ $OPTION_VERBOSE ]] \
+        && printf "Download '%s' and save as '%s'.\\n" "$url" "$file"
+
+    download_file "$url" "$file"
+
+    # if [[ ! $OPTION_FORCE ]]; then
+    #     [[ $OPTION_VERBOSE ]] && \
+    #         printf "Download SHA1 verification: %s.\\n" "$1.sha1"
+    # 
+    #     if ! curl --fail $optionSilent "$1.sha1" > "$2.sha1"; then
+    #         rm -f "$2.sha1"
+    #         fail "Could not download SHA1 for installation program."
+    #     fi
+    # fi
+}
+
+
+
+##
 # Check details on local environment
 #
 app_check()
@@ -379,15 +441,44 @@ Read more:
 #
 app_selfupdate()
 {
-    local tmp="/tmp/dbwebb-cli.$$"
-    local url="https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install"
+    local url="${OPTION_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install}"
+    local file="/tmp/dbwebb-cli.$$"
 
-    if ! curl --fail --silent "$url" > "$tmp"; then
-        rm -f "$tmp"
-        fail "Could not download installations program. You need curl and a network connection."
-    fi
-    bash < "$tmp"
-    rm -f "$tmp"
+    download_file_verify_hash "$url" "$file"
+
+    [[ $OPTION_DRY ]] || \
+        DBWEBB_INSTALL_SOURCE="$OPTION_SOURCE_BIN" \
+        DBWEBB_INSTALL_TARGET="$OPTION_TARGET"     \
+        bash < "$file"
+    rm -f "$file"
+
+    # local tmp="/tmp/dbwebb-cli.$$"
+    # local tmpSha1="$tmp.sha1"
+    # local url="${OPTION_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install}"
+    # local urlSha1="$url.sha1"
+    # local optionSilent="--silent"
+    # 
+    # [[ $OPTION_VERBOSE ]] && optionSilent=
+    # [[ $OPTION_VERBOSE ]] && printf "Download install program: %s.\\n" "$url"
+    # 
+    # if ! curl --fail $optionSilent "$url" > "$tmp"; then
+    #     rm -f "$tmp"
+    #     fail "Could not download installation program. You need curl and a network connection."
+    # fi
+    # 
+    # if [[ ! $OPTION_FORCE ]]; then
+    #     [[ $OPTION_VERBOSE ]] && printf "Download SHA1 verification: %s.\\n" "$urlSha1"
+    # 
+    #     if ! curl --fail $optionSilent "$urlSha1" > "$tmpSha1"; then
+    #         rm -f "$tmpSha1"
+    #         fail "Could not download SHA1 for installation program."
+    #     fi
+    # fi
+    # 
+    # if [[ ! $OPTION_DRY ]]; then
+    #     SOURCE="$OPTION_SOURCE" TARGET="$OPTION_TARGET" bash < "$tmp"
+    # fi
+    # rm -f "$tmp" "$tmpSha1"
 }
 
 
@@ -399,20 +490,38 @@ app_help_selfupdate()
 {
     printf "\
 Usage:
- %s
+ %s [options]
+
+Options:
+ --dry                  Download but do not actually perform the update.
+ --force                Install and ignore validation of checksums.
+ --source <source>      Source to download installation program.
+ --source-bin <install> Source to installation program to download and install.
+ --target <target>      Target dir for installation.
+ --verbose              Be more verbose in output.
 
 Help:
  Update the utility to the latest version through an automated
  installation script.
 
- $ %s selfupdate
+ $ $APP_NAME selfupdate
+ $ $APP_NAME selfupdate --verbose
+ $ $APP_NAME selfupdate --verbose --dry
 
- Some pre-conditions are checked and warned, but they do not
- hinder an installation.
+ You can perform a local installation by specifying the installation program
+ to use, the program file to download and the installation directory. This is
+ how the test program verifies the installation and it works if you are in
+ the root of the development git-repo.
+ 
+ $ $APP_NAME selfupdate          \\
+     --source file:///\$PWD/src/install.bash     \\
+     --source-bin file:///\$PWD/src/dbwebb.bash  \\
+     --target build/bin                         \\
+     --force
 
 Read more:
  https://dbwebb.se/dbwebb-cli/$1
-" "$1" "$APP_NAME"
+" "$1"
 }
 
 
@@ -437,9 +546,42 @@ main()
     # Parse incoming options and arguments
     while (( $# )); do
         case "$1" in
+            --dry)
+                readonly OPTION_DRY=1
+                shift
+            ;;
+
+            --force | -f)
+                readonly OPTION_FORCE=1
+                shift
+            ;;
+
             --help | -h)
                 usage
                 exit 0
+            ;;
+
+            --silent)
+                readonly OPTION_SILENT=1
+                shift
+            ;;
+
+            --source)
+                shift
+                readonly OPTION_SOURCE=$1
+                shift
+            ;;
+
+            --source-bin)
+                shift
+                readonly OPTION_SOURCE_BIN=$1
+                shift
+            ;;
+
+            --target)
+                shift
+                readonly OPTION_TARGET=$1
+                shift
             ;;
 
             --version | -v)
@@ -449,16 +591,6 @@ main()
 
             --verbose)
                 readonly OPTION_VERBOSE=1
-                shift
-            ;;
-
-            --silent)
-                readonly OPTION_SILENT=1
-                shift
-            ;;
-
-            --force | -f)
-                readonly OPTION_FORCE=1
                 shift
             ;;
 
