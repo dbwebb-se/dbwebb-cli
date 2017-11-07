@@ -16,7 +16,7 @@ readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 #
 version()
 {
-    printf "v2.9.3* (2017-11-06)\\n"
+    printf "v2.9.4 (2017-11-07)\\n"
 }
 
 
