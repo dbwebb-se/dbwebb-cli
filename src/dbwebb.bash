@@ -6,7 +6,7 @@
 ##
 # Globals (prefer none)
 # 
-readonly APP_NAME="dbwebb3"
+readonly APP_NAME="$(basename "$0")"
 readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 
 
