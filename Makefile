@@ -40,7 +40,12 @@ CHECK_VERSION = $(ECHO) `basename $(1)` `$(1) --version $(2)` `which $(1)`
 #
 BIN     := .bin
 
-SHELLCHECK := $(BIN)/shellcheck
+ifeq ($(wildcard $(BIN)/shellcheck),)
+	SHELLCHECK := shellcheck
+else
+	SHELLCHECK := $(BIN)/shellcheck
+endif
+
 BATS       := $(BIN)/bats
 
 INSTALL_DIR := /usr/local/bin
