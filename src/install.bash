@@ -40,14 +40,13 @@ function checkTool() {
     if ! hash "$1" 2> /dev/null; then
         # TODO Issue warning, not failed
         $ECHO "\\n$MSG_FAILED Missing $1, install it $2"
-        #exit -1
+        exit 1
     fi
 }
 
 $ECHO "$MSG_DOING Checking precondition..."
 
-checkTool "curl"      "using your packet manager."
-checkTool "wget"      "using your packet manager."
+checkTool "curl"      "using your packet manager." || checkTool "wget"      "using your packet manager."
 checkTool "rsync"     "using your packet manager."
 checkTool "git"       "https://dbwebb.se/labbmiljo/git"
 #checkTool "make"      "https://dbwebb.se/labbmiljo/make"
