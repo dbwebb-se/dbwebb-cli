@@ -61,10 +61,13 @@ $ECHO "\\n$MSG_DONE"
 $ECHO "$MSG_DOING Downloading dbwebb-cli..."
 $ECHO "$SOURCE"
 
-# TODO support both wget and curl
-#if ! wget -qO "$TMP" "$SOURCE"; then
-if ! curl --silent --output "$TMP" "$SOURCE"; then
-    rm -f $TMP
+if command -v curl 2>/dev/null; then
+    curl --silent --output "$TMP" "$SOURCE"
+else
+    wget -q0 "$TMP" "$SOURCE"
+fi
+
+if [ ! -f "$TMP" ]; then
     $ECHO "$MSG_FAILED downloading dbwebb-cli."
     $ECHO "I could not download the script from GitHub."
     $ECHO "Failed to access: $SOURCE"
