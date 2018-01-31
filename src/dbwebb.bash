@@ -225,7 +225,7 @@ check_environment()
 
     printf "dbwebb utilities."
     printf "\\n------------------------------------\\n"
-    check_command_version "dbwebb3" ""  "| cut -d ' ' -f 1"
+    check_command_version "$APP_NAME" ""  "| cut -d ' ' -f 1"
     printf "\\n"
     
     printf "dbwebb environment."
