@@ -40,7 +40,7 @@ function checkTool() {
     if ! hash "$1" 2> /dev/null; then
         # TODO Issue warning, not failed
         $ECHO "\\n$MSG_FAILED Missing $1, install it $2"
-        exit 1
+        return 1
     fi
 }
 
