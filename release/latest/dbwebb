@@ -34,10 +34,10 @@ Usage:
  %s [options] [command] [arguments]
 
 Command:
- check                    Check and display details on local environment.
- config                   Create/update configuration file.
- help [command]           Show general help or detailed help on command.
- selfupdate               Update to latest version.
+ check               Check and display details on local environment.
+ config              Create/update configuration file.
+ help [command]      Show general help or detailed help on command.
+ selfupdate          Update to latest version.
 
 Options:
  --dry               Run dry for test, limit what actually is performed.
