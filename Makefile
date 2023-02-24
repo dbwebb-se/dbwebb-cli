@@ -40,7 +40,7 @@ CHECK_VERSION = $(ECHO) `basename $(1)` `$(1) --version $(2)` `which $(1)`
 #
 BIN     := .bin
 
-SHELLCHECK := $(BIN)/shellcheck
+SHELLCHECK := docker run --rm -v "$$PWD:/mnt" koalaman/shellcheck:stable
 BATS       := $(BIN)/bats
 
 INSTALL_DIR := /usr/local/bin
@@ -204,7 +204,7 @@ release-app:
 install-tools-bash:
 	@$(call HELPTEXT,$@)
 	# Shellcheck
-	curl -s https://storage.googleapis.com/shellcheck/shellcheck-latest.linux.x86_64.tar.xz | tar -xJ -C build/ && rm -f .bin/shellcheck && ln build/shellcheck-latest/shellcheck .bin/
+	#curl -s https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.x86_64.tar.xz | tar -xJ -C build/ && rm -f .bin/shellcheck && ln build/shellcheck-latest/shellcheck .bin/
 
 	# Bats
 	curl -Lso $(BIN)/bats-exec-suite https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-suite
@@ -221,7 +221,7 @@ install-tools-bash:
 check-tools-bash:
 	@$(call HELPTEXT,$@)
 	@$(call CHECK_VERSION, bash, | head -1 | cut -d ' ' -f 4)
-	@$(call CHECK_VERSION, $(SHELLCHECK), | grep version: | cut -d ' ' -f 2)
+	@$(SHELLCHECK) --version
 	@$(call CHECK_VERSION, $(BATS))
 
 
