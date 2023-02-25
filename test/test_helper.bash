@@ -10,5 +10,7 @@ setup()
 
 teardown()
 {
+    rm -rf build/.dbwebb
+    rm -rf build/bin
     unset DBWEBB_CONFIG_DIR
 }
