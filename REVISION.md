@@ -2,7 +2,6 @@ Revision history
 =================================
 
 v2.9.6* (2023-02-24)
-v2.9.5* (2017-11-07)
 ---------------------------------
 
 * TODO add code coverage to CI.
@@ -16,6 +15,11 @@ v2.9.5* (2017-11-07)
 * Rename bats/ to test/.
 * Use bats from docker instead of install locally.
 * Use shellcheck from docker instead of install locally.
+
+
+v2.9.5* (2017-11-07)
+---------------------------------
+
 * Make clean before make test.
 
 
