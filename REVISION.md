@@ -1,7 +1,7 @@
 Revision history
 =================================
 
-
+v2.9.6* (2023-02-24)
 v2.9.5* (2017-11-07)
 ---------------------------------
 
@@ -11,6 +11,11 @@ v2.9.5* (2017-11-07)
 * TODO installation phase checksum sha1/md5.
 * TODO installation.bash support both curl/wget.
 
+* Fix file permissions when running bats locally and with docker.
+* Add build of docker with dbwebb.bash.
+* Rename bats/ to test/.
+* Use bats from docker instead of install locally.
+* Use shellcheck from docker instead of install locally.
 * Make clean before make test.
 
 

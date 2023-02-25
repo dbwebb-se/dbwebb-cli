@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+
+  bats:
+    #image: bats/bats:latest
+    build:
+      context: .docker/bats
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+
+  dbwebb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+
+  shellcheck:
+    image: koalaman/shellcheck:stable
+    volumes:
+      - .:/mnt

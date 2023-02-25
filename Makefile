@@ -40,8 +40,8 @@ CHECK_VERSION = $(ECHO) `basename $(1)` `$(1) --version $(2)` `which $(1)`
 #
 BIN     := .bin
 
-SHELLCHECK := docker run --rm -v "$$PWD:/mnt" koalaman/shellcheck:stable
-BATS       := $(BIN)/bats
+BATS       := docker-compose run bats
+SHELLCHECK := docker-compose run shellcheck
 
 INSTALL_DIR := /usr/local/bin
 
@@ -230,13 +230,13 @@ check-tools-bash:
 .PHONY: shellcheck
 shellcheck:
 	@$(call HELPTEXT,$@)
-	#[ ! -f src/*.bash ] || $(SHELLCHECK) --shell=bash src/*.bash
-	$(SHELLCHECK) --shell=bash src/*.bash
+	-$(SHELLCHECK) --shell=bash src/*.bash
 
 
 
 # target: bats               - Run bats for unit testing bash files.
 .PHONY: bats
-bats:
+bats: prepare
 	@$(call HELPTEXT,$@)
-	[ ! -d bats ] || $(BATS) bats/
+	-[ ! -d test ] || $(BATS) test
+
