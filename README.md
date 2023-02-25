@@ -1,8 +1,8 @@
 dbwebb-cli version 3
 ================================
 
-[![Read the docs](https://readthedocs.org/projects/dbwebb-cli/badge/?version=latest)](https://dbwebb-cli.readthedocs.io/en/latest/)
-[![Join the chat at https://gitter.im/dbwebb-se/dbwebb-cli](https://badges.gitter.im/dbwebb-se/dbwebb-cli.svg)](https://gitter.im/dbwebb-se/dbwebb-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Documentation Status](https://readthedocs.org/projects/dbwebb-cli/badge/?version=latest)](https://dbwebb-cli.readthedocs.io/en/latest/?badge=latest)
+
 [![Packagist](https://poser.pugx.org/dbwebb/dbwebb-cli/v/stable)](https://packagist.org/packages/dbwebb/dbwebb-cli)
 [![npm version](https://badge.fury.io/js/%40dbwebb%2Fdbwebb-cli.svg)](https://badge.fury.io/js/%40dbwebb%2Fdbwebb-cli)
 [![Travis](https://travis-ci.org/dbwebb-se/dbwebb-cli.svg?branch=master)](https://travis-ci.org/dbwebb-se/dbwebb-cli)

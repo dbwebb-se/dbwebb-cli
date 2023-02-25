@@ -6,7 +6,7 @@
 ##
 # Globals (prefer none)
 # 
-readonly APP_NAME="dbwebb3"
+readonly APP_NAME="dbw"
 readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 
 
@@ -35,9 +35,14 @@ Usage:
 
 Command:
  check               Check and display details on local environment.
+ commands            Show all commands included in the course repo.
  config              Create/update configuration file.
  help [command]      Show general help or detailed help on command.
  selfupdate          Update to latest version.
+ 
+Commands supported by course repo:
+ <command> [options] [arguments]  Execute command with options and arguments.
+ <command> help                   Show help for the command.
 
 Options:
  --dry               Run dry for test, limit what actually is performed.
@@ -314,6 +319,12 @@ download_file_verify_hash()
 
 
 
+###############################################################################
+# Application commands.
+#
+
+
+
 ##
 # Check details on local environment
 #
@@ -526,6 +537,116 @@ Read more:
 
 
 
+###############################################################################
+# Course repo.
+#
+export DBW_COURSE_DIR=
+
+
+##
+# Find the course repo file backwards.
+#
+function find_course_repo_configuration
+{
+    local found=
+    local dir="${1:-$PWD}"
+
+    dir="${dir%/}"
+
+    while [ "$dir" != "/" ]; do
+        #printf "$dir\n"
+        found="$( find "$dir" -maxdepth 2 -path "$dir/.dbwebb/config_course" 2>&1 | grep -v 'Permission denied' )"
+        if [[ $found ]]; then
+            DBW_COURSE_DIR="$dir"
+            break
+        fi
+        dir=$( dirname "$dir" )
+    done
+}
+
+
+
+##
+# Get the name of the course as $DBW_COURSE
+#
+function sourceCourseRepoFile
+{
+    DBW_COURSE_FILE="$DBW_COURSE_DIR/$DBW_COURSE_FILE_NAME"
+    if [ -f "$DBW_COURSE_FILE" ]; then
+        # shellcheck source=$DBW_COURSE_DIR/$DBW_COURSE_FILE_NAME
+        source "$DBW_COURSE_FILE"
+    fi
+}
+
+
+
+##
+# Show command available from the course repo.
+#
+app_commands()
+{
+    local dir="$PWD"
+
+    if [[ $OPTION_TARGET ]]; then
+        [[ -d $OPTION_TARGET ]] || \
+            fail "The --target is not a valid start directory to look from."
+    
+        dir="$OPTION_TARGET"
+    fi
+
+    find_course_repo_configuration "$dir"
+
+    [[ $DBW_COURSE_DIR ]] || \
+        fail "You are not in a course repo, its config file is now found."
+
+    [[ $OPTION_VERBOSE ]] && \
+        printf "Course dir found: %s\n" "$DBW_COURSE_DIR"
+    
+    exit 0
+}
+
+
+
+##
+# Help for the command.
+#
+app_help_commands()
+{
+    printf "\
+Usage:
+ %s [options]
+
+Options:
+ --target <target>      Target dir to check as the course repo.
+ --verbose              Be more verbose in output.
+
+Help:
+ Show the commands that are available in current or choosen course repo.
+
+ $ $APP_NAME commands
+ $ $APP_NAME commands --verbose
+
+ It will give an error if your current work directory is not within a course
+ repo.
+ 
+ $ $APP_NAME commands --target <path to a course repo>
+
+ It will now check the target path as the current course repo, instead of the
+ current working directory.
+
+Read more:
+ https://dbwebb.se/dbwebb-cli/$1
+" "$1"
+}
+
+
+
+###############################################################################
+# Main.
+#
+
+
+
 ##
 # For development and test.
 #
@@ -595,6 +716,7 @@ main()
             ;;
 
             check       | \
+            commands    | \
             config      | \
             develop     | \
             help        | \

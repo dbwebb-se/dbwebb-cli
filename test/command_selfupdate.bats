@@ -16,7 +16,7 @@ load test_helper
         --target build/bin
     (( $status == 0 ))
 
-    run build/bin/dbwebb3 --version
+    run build/bin/dbw --version
     (( $status == 0 ))
     [[ $( expr "$output" : "v[0-9][0-9.]*" ) ]]
 }

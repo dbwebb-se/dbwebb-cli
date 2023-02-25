@@ -17,7 +17,7 @@
 SOURCE="${DBWEBB_INSTALL_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbwebb}"
 PATH1="${DBWEBB_INSTALL_TARGET:-/usr/local/bin}"
 PATH2="/usr/bin"
-APP_NAME="dbwebb3"
+APP_NAME="dbw"
 WHERE="$PATH1/$APP_NAME"
 TMP="/tmp/$$"
 
