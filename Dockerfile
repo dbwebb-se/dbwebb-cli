@@ -1,7 +1,7 @@
 FROM bash:latest
 
-COPY src/dbwebb.bash /usr/local/bin/dbwebb3
+COPY src/dbw.bash /usr/local/bin/dbw
 
-RUN chmod 755 /usr/local/bin/dbwebb3
+RUN chmod 755 /usr/local/bin/dbw
 
-ENTRYPOINT ["bash", "/usr/local/bin/dbwebb3"]
+ENTRYPOINT ["bash", "/usr/local/bin/dbw"]

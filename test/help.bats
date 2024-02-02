@@ -4,29 +4,29 @@
 #
 load test_helper
 
-@test "command help, -h, --h shows general help" {
-    local helpMessage="Utility to work with dbwebb courses. Read more on:"
+@test "help, -h, --h shows general help" {
+    local helpMessage="Utility to work with course repo."
 
-    run src/dbwebb.bash -h
+    run src/dbw.bash -h
     (( $status == 0 ))
     [[ "${lines[0]}" == "$helpMessage" ]]
 
-    run src/dbwebb.bash --help
+    run src/dbw.bash --help
     (( $status == 0 ))
     [[ "${lines[0]}" == "$helpMessage" ]]
 
-    run src/dbwebb.bash help
+    run src/dbw.bash help
     (( $status == 0 ))
     [[ "${lines[0]}" == "$helpMessage" ]]
 }
 
-@test "command help takes as most one extra argument" {
-    run src/dbwebb.bash help a b c
+@test "help takes as most one extra argument" {
+    run src/dbw.bash help a b c
     (( $status == 2 ))
 }
 
-@test "command help has detailed help" {
-    run src/dbwebb.bash help help
+@test "help has detailed help" {
+    run src/dbw.bash help help
     (( $status == 0 ))
     [[ "${lines[0]}" = "Usage:" ]]
     [[ "${lines[1]}" == *"help"* ]]

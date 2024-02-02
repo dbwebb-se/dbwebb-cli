@@ -4,15 +4,15 @@
 #
 load test_helper
 
-@test "command selfupdate" {
-    run src/dbwebb.bash selfupdate --dry
+@test "selfupdate" {
+    run src/dbw.bash selfupdate --dry
     (( $status == 0 ))
 }
 
-@test "command selfupdate execute and check version" {
-    run src/dbwebb.bash selfupdate                 \
+@test "selfupdate execute and check version" {
+    run src/dbw.bash selfupdate                 \
         --source file:///$PWD/src/install.bash     \
-        --source-bin file:///$PWD/src/dbwebb.bash  \
+        --source-bin file:///$PWD/src/dbw.bash  \
         --target build/bin
     (( $status == 0 ))
 
@@ -21,8 +21,8 @@ load test_helper
     [[ $( expr "$output" : "v[0-9][0-9.]*" ) ]]
 }
 
-@test "command selfupdate has detailed help" {
-    run src/dbwebb.bash help selfupdate
+@test "selfupdate has detailed help" {
+    run src/dbw.bash help selfupdate
     (( $status == 0 ))
     [[ "${lines[0]}" = "Usage:" ]]
     [[ "${lines[1]}" == *"selfupdate"* ]]

@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/code
 
-  dbwebb:
+  dbw:
     build:
       context: .
       dockerfile: Dockerfile

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Download and install dbwebb-cli.
+# Download and install dbw.
 #
 # Execute as:
 # curl https://raw.githubusercontent.com/canax/dbwebb-cli/master/src/install.bash | bash
@@ -14,8 +14,8 @@
 #
 # Basic settings
 #
-SOURCE="${DBWEBB_INSTALL_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbwebb}"
-PATH1="${DBWEBB_INSTALL_TARGET:-/usr/local/bin}"
+SOURCE="${DBW_INSTALL_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/dbw}"
+PATH1="${DBW_INSTALL_TARGET:-/usr/local/bin}"
 PATH2="/usr/bin"
 APP_NAME="dbw"
 WHERE="$PATH1/$APP_NAME"
@@ -23,7 +23,7 @@ TMP="/tmp/$$"
 
 ECHO="echo -e"
 ECHON="echo -n"
-MSG_DOING="\\033[1;37;40m[dbwebb-cli]\\033[0m"
+MSG_DOING="\\033[1;37;40m[dbw]\\033[0m"
 #MSG_DONE="\033[0;30;42m[OK]\033[0m"
 MSG_DONE=""
 #MSG_OK="\\033[0;30;42m[SUCCESS]\\033[0m"
@@ -59,14 +59,14 @@ $ECHO "\\n$MSG_DONE"
 #
 # Download
 #
-$ECHO "$MSG_DOING Downloading dbwebb-cli..."
+$ECHO "$MSG_DOING Downloading dbw..."
 $ECHO "$SOURCE"
 
 # TODO support both wget and curl
 #if ! wget -qO "$TMP" "$SOURCE"; then
 if ! curl --silent --output "$TMP" "$SOURCE"; then
     rm -f $TMP
-    $ECHO "$MSG_FAILED downloading dbwebb-cli."
+    $ECHO "$MSG_FAILED downloading dbw."
     $ECHO "I could not download the script from GitHub."
     $ECHO "Failed to access: $SOURCE"
     exit 1
@@ -81,7 +81,7 @@ $ECHO "$MSG_DONE"
 #
 # Installing into path
 #
-$ECHO "$MSG_DOING Installing dbwebb-cli..."
+$ECHO "$MSG_DOING Installing dbw..."
 
 if [[ ! -d $PATH1 ]]; then
     WHERE="$PATH2/$APP_NAME"
@@ -96,7 +96,7 @@ if ! install -v -m 0755 "$TMP" "$WHERE"; then
     exit 1
 fi
 
-ls -l $WHERE
+ls -l "$WHERE"
 
 $ECHO "$MSG_DONE"
 
@@ -119,7 +119,7 @@ $ECHO "$MSG_DONE"
 $ECHO "$MSG_DOING Check what version we have..."
 
 if ! "$WHERE" --version; then
-    $ECHO "$MSG_FAILED checking the version of dbwebb-cli."
+    $ECHO "$MSG_FAILED checking the version of dbw."
     $ECHO "Try re-running the installation script or post the output of the installation procedure to the forum and ask for help."
     exit 1
 fi
@@ -132,5 +132,5 @@ $ECHO "$MSG_DONE"
 # Done
 #
 $ECHO "$MSG_DOING Done with success!"
-$ECHO "Execute '$APP_NAME --help' to get an overview of the command."
-$ECHO "Read the manual: https://dbwebb.se/dbwebb-cli"
+$ECHO "Execute '$APP_NAME help' to get an overview of the command."
+#$ECHO "Read the manual: https://dbwebb.se/dbwebb-cli"

@@ -8,31 +8,20 @@ dbwebb-cli version 3
 [![Travis](https://travis-ci.org/dbwebb-se/dbwebb-cli.svg?branch=master)](https://travis-ci.org/dbwebb-se/dbwebb-cli)
 [![CircleCI](https://circleci.com/gh/dbwebb-se/dbwebb-cli.svg?style=svg)](https://circleci.com/gh/dbwebb-se/dbwebb-cli)
 
-A CLI client to work with dbwebb courses, built in bash.
+A CLI client `dbw` to work with dbwebb courses, built in bash.
 
-This is development of version 3 for dbwebb-cli, a complete rewrite of the codebas. Version 1 and 2 is available in [mosbth/dbwebb-cli](https://github.com/mosbth/dbwebb-cli).
+This is development of version 3 for dbwebb-cli, a complete rewrite of the codebas. 
 
+Version 1 and 2 is available in [mosbth/dbwebb-cli](https://github.com/mosbth/dbwebb-cli). The documentation for those older releases are available at [dbwebb.se/dbwebb-cli](https://dbwebb.se/dbwebb-cli) (swedish only).
 
-
-Documentation
-------------------
-
-There is documentation on [dbwebb.se/dbwebb-cli](https://dbwebb.se/dbwebb-cli) (swedish only).
-
-Or use the built-in `dbwebb help <command>`.
+Here follows the documentation for version 3 and the `dbw` utility.
 
 
 
 Install
 ------------------
 
-Download and install using installation program, composer or npm.
-
-
-
-### Installation program
-
-Download and install to `/usr/local/bin` or `/usr/bin`. Use `sudo` if needed. The executable will be installed as `dbwebb3` (for now).
+Download and install to `/usr/local/bin` or `/usr/bin`. Use `sudo` if needed. The executable will be installed as `dbw`.
 
 Using curl for download.
 
@@ -49,31 +38,99 @@ bash -c "$(wget -qO- https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/mast
 Check where its installed and its version, just to make sure it works.
 
 ```bash
-which dbwebb3
-dbwebb3 --version
+which dbw
+dbw --version
 ```
 
 
 
-### Composer
+dbw help
+------------------
 
-Install [`dbwebb/dbwebb-cli`](https://packagist.org/packages/dbwebb/dbwebb-cli) using composer as part of you development environment.
+To print out the general help on the application.
 
-```bash
-composer require dbwebb/dbwebb-cli
-vendor/bin/dbwebb --version
+```
+dbw help
+```
+
+You can view details on how to get help for a certain command.
+
+```
+dbw help help
 ```
 
 
 
-### NPM
+dbw check
+------------------
 
-Install [`@dbwebb/dbwebb-cli`](https://www.npmjs.com/package/@dbwebb/dbwebb-cli) using npm as part of you development environment.
+This is to check your environment to troubleshoot if needed.
 
-```bash
-npm install @dbwebb/dbwebb-cli
-node_modules/.bin/dbwebb --version
 ```
+dbw check
+```
+
+Get help on the command.
+
+```
+dbw help check
+```
+
+
+
+dbw config
+------------------
+
+You can optionally create (and update) a configuration file for the utility.
+
+```
+dbw config
+```
+
+Get help on the command.
+
+```
+dbw help config
+```
+
+
+
+dbw repo
+------------------
+
+Each course repo can include its own utilities (commands) to execute. Use `dbw repo` to get details on the current repo and what utilities it has implemented.
+
+```
+dbw repo
+```
+
+Get help on the command.
+
+```
+dbw help repo
+```
+
+
+
+<!--
+dbw selfupdate
+------------------
+
+Update the utility to its latest version, use sudo if needed.
+
+```
+sudo dbw selfupdate
+```
+
+-->
+
+
+<!--
+Documentation
+------------------
+
+Or use the built-in `dbwebb help <command>`.
+-->
 
 
 
@@ -86,5 +143,5 @@ This software carries a MIT license.
 
 ```
  .  
-..:  Copyright (c) 2013 - 2017 Mikael Roos, mos@dbwebb.se
+..:  Copyright (c) 2013 - 2024 Mikael Roos, mos@dbwebb.se
 ```

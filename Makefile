@@ -142,21 +142,21 @@ install-dev: prepare install-tools-bash
 
 
 
-# target: update             - Update the codebase and tools.
-.PHONY:  update
-update:
+# # target: update             - Update the codebase and tools.
+# .PHONY:  update
+# update:
+# 	@$(call HELPTEXT,$@)
+# 	[ ! -d .git ] || git pull
+# 	[ ! -f composer.json ] || composer update
+# 	[ ! -f package.json ] || npm update
+
+
+
+# target: tag                  - Prepare to tag new version.
+.PHONY: tag
+tag: test release
 	@$(call HELPTEXT,$@)
-	[ ! -d .git ] || git pull
-	[ ! -f composer.json ] || composer update
-	[ ! -f package.json ] || npm update
-
-
-
-# target: tag-prepare        - Prepare to tag new version.
-.PHONY: tag-prepare
-tag-prepare: test release-app
-	@$(call HELPTEXT,$@)
-	src/dbwebb.bash --version
+	release/latest/dbw --version
 	grep '^v.' REVISION.md | head -1
 	git tag | tail -1
 	git status
@@ -172,8 +172,8 @@ tag-prepare: test release-app
 .PHONY: install-app
 install-app: release-app
 	@$(call HELPTEXT,$@)
-	sudo install -m 0755 src/dbwebb.bash $(INSTALL_DIR)/dbwebb3
-	@$(call CHECK_VERSION, dbwebb3, | cut -d ' ' -f 1)
+	sudo install -m 0755 release/latest/dbw $(INSTALL_DIR)/dbw
+	@$(call CHECK_VERSION, dbw)
 
 
 
@@ -182,15 +182,16 @@ install-app: release-app
 release-app:
 	@$(call HELPTEXT,$@)
 	install -d release/latest
-	install -m 0755 src/dbwebb.bash release/latest/dbwebb
+	install -m 0755 src/dbw_functions.bash release/latest/dbw
+	sed -i -e 's/#main /main /g' release/latest/dbw
 	install -m 0755 src/install.bash release/latest/install
 
-	sha1sum release/latest/dbwebb > release/latest/dbwebb.sha1
+	sha1sum release/latest/dbw     > release/latest/dbw.sha1
 	sha1sum release/latest/install > release/latest/install.sha1
 
 	ls -l release/latest
 
-	release/latest/dbwebb --version
+	release/latest/dbw --version
 
 
 
@@ -203,16 +204,16 @@ release-app:
 .PHONY: install-tools-bash
 install-tools-bash:
 	@$(call HELPTEXT,$@)
-	# Shellcheck
-	#curl -s https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.x86_64.tar.xz | tar -xJ -C build/ && rm -f .bin/shellcheck && ln build/shellcheck-latest/shellcheck .bin/
+	# # Shellcheck
+	# #curl -s https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.x86_64.tar.xz | tar -xJ -C build/ && rm -f .bin/shellcheck && ln build/shellcheck-latest/shellcheck .bin/
 
-	# Bats
-	curl -Lso $(BIN)/bats-exec-suite https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-suite
-	curl -Lso $(BIN)/bats-exec-test https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-test
-	curl -Lso $(BIN)/bats-format-tap-stream https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-format-tap-stream
-	curl -Lso $(BIN)/bats-preprocess https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-preprocess
-	curl -Lso $(BATS) https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats
-	chmod 755 $(BIN)/bats*
+	# # Bats
+	# curl -Lso $(BIN)/bats-exec-suite https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-suite
+	# curl -Lso $(BIN)/bats-exec-test https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-test
+	# curl -Lso $(BIN)/bats-format-tap-stream https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-format-tap-stream
+	# curl -Lso $(BIN)/bats-preprocess https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-preprocess
+	# curl -Lso $(BATS) https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats
+	# chmod 755 $(BIN)/bats*
 
 
 

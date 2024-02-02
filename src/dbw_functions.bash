@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 #
-# dbwebb cli utility to work with dbwebb courses.
+# dbw cli utility to work with course repos.
 #
 
 ##
 # Globals (prefer none)
 # 
-readonly APP_NAME="dbwebb3"
-readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
+readonly APP_NAME="dbw"
+readonly DBW_CONFIG_DIR=${DBW_CONFIG_DIR:-"$HOME/.dbw"}
+readonly DBW_CONFIG_FILE=${DBW_CONFIG_FILE:-"$DBW_CONFIG_DIR/dbw_config.env"}
+readonly REPO_CONFIG_FILE_DEFAULT=${REPO_CONFIG_FILE_DEFAULT:-".dbw/repo_config.env"}
 
 
 
@@ -16,7 +18,7 @@ readonly DBW_CONFIG_DIR=${DBWEBB_CONFIG_DIR:-"$HOME/.dbwebb"}
 #
 version()
 {
-    printf "v2.9.4* (2017-11-07)\\n"
+    printf "v3.0.* (2024-02-03)\\n"
 }
 
 
@@ -27,8 +29,7 @@ version()
 usage()
 {
     printf "\
-Utility to work with dbwebb courses. Read more on:
-https://dbwebb.se/dbwebb-cli/
+Utility to work with course repo.
 
 Usage:
  %s [options] [command] [arguments]
@@ -36,17 +37,26 @@ Usage:
 Command:
  check               Check and display details on local environment.
  config              Create/update configuration file.
- help [command]      Show general help or detailed help on command.
+ help [command]      Show general help or detailed help on a command.
+ repo                Show details on the repo and all included commands, if any.
  selfupdate          Update to latest version.
+ 
+Commands supported by each course repo:
+ <command> [options] [arguments]  Execute command with options and arguments.
 
 Options:
- --dry               Run dry for test, limit what actually is performed.
- --force             Force potential dangerous operation.
  --help, -h          Show info on usage.
- --source <source>   Some commands use source as alternate source.
- --target <target>   Some commands use target as alternate target.
+ --silent            Suppress output.
+ --verbose           Be verbose and print details on whats happening.
  --version, -v       Show details on version.
 " "$APP_NAME"
+
+#  --dry               Run dry for test, limit what actually is performed.
+#  --force             Force potential dangerous operation.
+#  --help, -h          Show info on usage.
+#  --source <source>   Some commands use source as alternate source.
+#  --target <target>   Some commands use target as alternate target.
+
 }
 
 
@@ -62,8 +72,9 @@ bad_usage()
 
     printf "\
 For an overview of the command, execute:
-%s help
-" "$APP_NAME"
+ %s help
+ %s repo
+" "$APP_NAME" "$APP_NAME"
 }
 
 
@@ -75,14 +86,52 @@ For an overview of the command, execute:
 #
 fail()
 {
-    local red
+    local color
     local normal
 
-    red=$(tput setaf 1)
+    color=$(tput setaf 1)
     normal=$(tput sgr0)
 
-    printf "%s %s\\n" "${red}[FAILED]${normal}" "$*"
+    printf "%s $*\\n" "${color}[FAILED]${normal}"
     exit 2
+}
+
+
+
+##
+# Verbose output for detailed information
+#
+# @param string $* error message to display.
+#
+verbose()
+{
+    local color
+    local normal
+
+    color=$(tput setaf 4)
+    normal=$(tput sgr0)
+
+    [[ $OPTION_SILENT ]] \
+        || printf "%s $*\\n" "${color}[VERBOSE]${normal}"
+}
+
+
+
+##
+# Verbose output to show what is being done.
+#
+# @param string $* error message to display.
+#
+doing()
+{
+    local color
+    local normal
+
+    color=$(tput setaf 213)
+    normal=$(tput sgr0)
+
+    [[ $OPTION_SILENT ]] \
+        || printf "%s $*\\n" "${color}[$APP_NAME]${normal}"
 }
 
 
@@ -142,20 +191,22 @@ input()
 #
 config_read()
 {
-    local configDir="$DBW_CONFIG_DIR"
-    local configFile="$DBW_CONFIG_DIR/config"
+    local configFile=${1:-$DBW_CONFIG_FILE}
 
-    if [[ -f $configFile ]]; then
-        while IFS='= ' read -r lhs rhs
-        do
-            if [[ ! $lhs =~ ^\ *# && -n $lhs ]]; then
-                rhs="${rhs%%\#*}"    # Del in line right comments
-                rhs="${rhs%%*( )}"   # Del trailing spaces
-                rhs="${rhs%\"*}"     # Del opening string quotes 
-                rhs="${rhs#\"*}"     # Del closing string quotes 
-                export "$lhs"="$rhs"
-            fi
-        done < "$configFile"
+    if [[ -f "$configFile" ]]; then
+        # shellcheck source=/dev/null
+        . "$configFile"
+
+        # while IFS='= ' read -r lhs rhs
+        # do
+        #     if [[ ! $lhs =~ ^\ *# && -n $lhs ]]; then
+        #         rhs="${rhs%%\#*}"    # Del in line right comments
+        #         rhs="${rhs%%*( )}"   # Del trailing spaces
+        #         rhs="${rhs%\"*}"     # Del opening string quotes 
+        #         rhs="${rhs#\"*}"     # Del closing string quotes 
+        #         export "$lhs"="$rhs"
+        #     fi
+        # done < "$configFile"
     fi
 }
 
@@ -166,16 +217,13 @@ config_read()
 #
 config_create_update()
 {
-    local configDir="$DBW_CONFIG_DIR"
-    local configFile="$DBW_CONFIG_DIR/config"
+    install -d "$( dirname "$DBW_CONFIG_FILE" )" \
+        || fail "Could not create configuration dir: '$( dirname "$DBW_CONFIG_FILE" )'"
+    touch "$DBW_CONFIG_FILE" \
+        || fail "Could not create configuration file: '$DBW_CONFIG_FILE'"
 
-    install -d "$configDir" \
-        || fail "Could not create configuration dir: '$configDir'"
-    touch "$configFile" \
-        || fail "Could not create configuration file: '$configFile'"
-
-    echo "$configDir"
-    ls -l "$configDir"
+    echo "$DBW_CONFIG_FILE"
+    ls -l "$DBW_CONFIG_FILE"
 }
 
 
@@ -223,24 +271,21 @@ check_environment()
 {
     local configFile="$DBW_CONFIG_DIR/config"
 
-    printf "dbwebb utilities."
+    printf "App utilities."
     printf "\\n------------------------------------\\n"
-    check_command_version "dbwebb3" ""  "| cut -d ' ' -f 1"
+    check_command_version "$APP_NAME" ""  
     printf "\\n"
     
-    printf "dbwebb environment."
+    printf "App environment."
     printf "\\n------------------------------------\\n"
-    check_environment_variable "DBWEBB_CONFIG_DIR"
     check_environment_variable "DBW_CONFIG_DIR"
-    [[ -f $configFile ]] && \
-        printf "Configuration file is: %s\\n" "$configFile"
+    check_environment_variable "DBW_CONFIG_FILE"
     printf "\\n"
 
     printf "Details on installed utilities."
     printf "\\n------------------------------------\\n"
     check_command_version "bash"  ""   "| head -1 | cut -d ' ' -f 4"
     check_command_version "curl"  ""   "| head -1 | cut -d ' ' -f 2"
-    check_command_version "make"  ""   "| head -1"
     check_command_version "rsync" ""   "| head -1 | cut -d ' ' -f 4"
     check_command_version "ssh"   "-V" "| cut -d ' ' -f 1"
     check_command_version "wget"  ""   "| head -1 | cut -d ' ' -f 3"
@@ -315,6 +360,121 @@ download_file_verify_hash()
 
 
 ##
+# Read configuration files if they exists or silently ignore them.
+#
+configuration_load()
+{
+    # dbw
+    config_read
+
+    # course repo
+    repo_find_config_file
+    config_read "$REPO_CONFIG_FILE"
+}
+
+
+
+###############################################################################
+# Course repo functions.
+#
+
+
+
+##
+# Find the course repo config file.
+#
+function repo_find_config_file
+{
+    local dir=
+    local found=
+
+    dir="$( pwd )/."
+    REPO_CONFIG_FILE=
+    REPO_CONFIG_DIR=
+
+    while [ "$dir" != "/" ]; do
+        dir=$( dirname "$dir" )
+        found="$( find "$dir" -maxdepth 2 -wholename "$dir/$REPO_CONFIG_FILE_DEFAULT" 2> /dev/null )"
+        if [ "$found" ]; then
+            REPO_CONFIG_FILE="$found"
+            REPO_CONFIG_DIR="$( dirname "$found" )"
+            break
+        fi
+    done
+}
+
+
+
+##
+# List the available commands in the repo.
+#
+function repo_command_list
+{
+    local dir="$REPO_CONFIG_DIR/command"
+
+    [[ ! $REPO_CONFIG_FILE ]] \
+        && fail "You are not within a course repo!"
+
+    [[ -d "$dir" ]] \
+        || fail "There is no directory '$dir' and then no commands in this course repo."
+
+    ls "$dir"
+}
+
+
+
+##
+# Return 0 if the command exists, otherwise 1.
+#
+function repo_command_exists
+{
+    local command="$REPO_CONFIG_DIR/command/$1"
+
+    [[ ! $REPO_CONFIG_FILE ]] \
+        && return
+
+    [[ -d "$command" ]] \
+        && echo "$1"
+}
+
+
+
+##
+# Execute a repo command.
+#
+function repo_command_execute
+{
+    local commandDir="$REPO_CONFIG_DIR/command/$1"
+    local commandFile="$commandDir/command.bash"
+
+    [[ $OPTION_VERBOSE ]] \
+        && verbose "Execute command: $commandFile" \
+        && verbose "Arguments: " "${ARGS[@]}" \
+        && verbose bash "$commandFile" "${ARGS[@]}"
+
+    [[ -d $commandDir ]] \
+        || fail "This is not a valid command in this course repo (missing dir)!"
+
+    [[ -f $commandFile ]] \
+        || fail "This is not a valid command in this course repo (missing command.bash)!"
+
+    [[ -d $REPO_CONFIG_DIR ]] \
+        || fail "It is not a valid config dir in this course repo!"
+
+    # Always execute from the course repo base dir
+    cd "$( dirname "$REPO_CONFIG_DIR" )"
+    . "$commandFile" #"${ARGS[@]}"
+}
+
+
+
+###############################################################################
+# Application commands.
+#
+
+
+
+##
 # Check details on local environment
 #
 app_check()
@@ -327,7 +487,7 @@ app_check()
 ##
 # Help for the command.
 #
-app_help_check()
+app_check_help()
 {
     printf "\
 Usage:
@@ -340,9 +500,6 @@ Help:
  $ %s check
 
  Use this as a base for debugging.
-
-Read more:
- https://dbwebb.se/dbwebb-cli/$1
 " "$1" "$APP_NAME"
 }
 
@@ -361,7 +518,7 @@ app_config()
 ##
 # Help for the command.
 #
-app_help_config()
+app_config_help()
 {
     printf "\
 Usage:
@@ -372,15 +529,16 @@ Help:
 
  $ %s config
 
- The configuration is stored in the directory \$HOME/.dbwebb and
+ The configuration is stored in the directory '\$HOME/.dbw' and
  its location can be overridden setting the environment variable
- \$DBWEBB_CONFIG_DIR.
+ \$DBW_CONFIG_DIR.
+
+ The configuration file is 'dbw_config.env' is stored in the configuration
+ directory by default. Its name and location can be set with the
+ environment variable \$DBW_CONFIG_FILE.
 
  You can check details on the current configuration through the
  'check' command.
-
-Read more:
- https://dbwebb.se/dbwebb-cli/$1
 " "$1" "$APP_NAME"
 }
 
@@ -401,8 +559,8 @@ app_help()
         return
     fi
 
-    if type -t app_help_"$1" | grep -q function; then
-        app_help_"$1" "$1"
+    if type -t app_"$1"_help | grep -q function; then
+        app_"$1"_help "$1"
         exit 0
     else
         bad_usage "There is no extra help on command '$1'."
@@ -426,11 +584,60 @@ Command:
 
 Help:
  The help command displays help for a given command.
-
  $ %s help config
 
-Read more:
- https://dbwebb.se/dbwebb-cli/$1
+ You can list all available commands.
+ $ %s commands
+" "$1" "$APP_NAME" "$APP_NAME"
+}
+
+
+
+##
+# Create/update the configuration directory.
+#
+app_repo()
+{
+    repo_find_config_file
+    [[ ! $REPO_CONFIG_FILE ]] \
+        && fail "You are not within a course repo!"
+
+    config_read "$REPO_CONFIG_FILE"
+    [[ ! $REPO_COURSE ]] \
+        && fail "The repo does not have a setting for REPO_COURSE in the configuration file!\n$REPO_CONFIG_FILE"
+
+    [[ $OPTION_VERBOSE ]] \
+        && verbose "Course dir found: $REPO_CONFIG_FILE\n"
+
+    printf "\
+Course repo: %s
+================================
+Commands available:
+$( repo_command_list )
+" "$REPO_COURSE"
+}
+
+
+
+##
+# Help for the command.
+#
+app_repo_help()
+{
+    printf "\
+Usage:
+ %s
+
+Help:
+ Show details on the course repo and what commands it supplies.
+
+ $ %s repo
+
+ The course repo can include a directory '.dbw/' with details about the repo
+ and what commands it implements.
+
+ The first config file that is read is 'repo_config.env'and should at least
+ contain a setting for '\$COURSE'.
 " "$1" "$APP_NAME"
 }
 
@@ -442,7 +649,7 @@ Read more:
 app_selfupdate()
 {
     local url="${OPTION_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install}"
-    local file="/tmp/dbwebb-cli.$$"
+    local file="/tmp/dbw.$$"
 
     download_file_verify_hash "$url" "$file"
 
@@ -486,7 +693,7 @@ app_selfupdate()
 ##
 # Help for the command.
 #
-app_help_selfupdate()
+app_selfupdate_help()
 {
     printf "\
 Usage:
@@ -516,13 +723,16 @@ Help:
  $ $APP_NAME selfupdate          \\
      --source file:///\$PWD/src/install.bash     \\
      --source-bin file:///\$PWD/src/dbwebb.bash  \\
-     --target build/bin                         \\
+     --target build/bin                          \\
      --force
-
-Read more:
- https://dbwebb.se/dbwebb-cli/$1
 " "$1"
 }
+
+
+
+###############################################################################
+# Main.
+#
 
 
 
@@ -543,16 +753,22 @@ app_develop()
 # 
 main()
 {
+    configuration_load
+
     # Parse incoming options and arguments
     while (( $# )); do
         case "$1" in
+            --no-main)
+                exit 0
+            ;;
+
             --dry)
                 readonly OPTION_DRY=1
                 shift
             ;;
 
             --force | -f)
-                readonly OPTION_FORCE=1
+                #readonly OPTION_FORCE=1
                 shift
             ;;
 
@@ -595,9 +811,11 @@ main()
             ;;
 
             check       | \
+            commands    | \
             config      | \
             develop     | \
             help        | \
+            repo        | \
             selfupdate    )
                 if [[ ! $COMMAND ]]; then
                     COMMAND=$1
@@ -613,12 +831,16 @@ main()
             ;;
 
             *)
-                if [[ ! $COMMAND ]]; then
+                if [[ (! $COMMAND) && $( repo_command_exists "$1" ) ]]; then
+                    COMMAND=$1
+                    shift
+                elif [[ ! $COMMAND ]]; then
                     bad_usage "Unknown command '$1'."
                     exit 1
+                else
+                    ARGS+=("$1")
+                    shift
                 fi
-                ARGS+=("$1")
-                shift
             ;;
         esac
     done
@@ -628,6 +850,8 @@ main()
     # Execute the command 
     if type -t app_"$COMMAND" | grep -q function; then
         app_"$COMMAND"
+    elif [[ $( repo_command_exists "$COMMAND" ) ]]; then
+        repo_command_execute "$COMMAND"
     else
         bad_usage "Missing option or command."
         exit 1
@@ -636,4 +860,4 @@ main()
 
 
 
-main "$@"
+#main "$@"
