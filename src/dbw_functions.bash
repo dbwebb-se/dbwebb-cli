@@ -18,7 +18,7 @@ readonly REPO_CONFIG_FILE_DEFAULT=${REPO_CONFIG_FILE_DEFAULT:-".dbw/repo_config.
 #
 version()
 {
-    printf "v3.0.* (2024-02-03)\\n"
+    printf "v3.0.0 (2024-02-03)\\n"
 }
 
 
@@ -467,7 +467,10 @@ function repo_command_execute
         || fail "It is not a valid config dir in this course repo!"
 
     # Always execute from the course repo base dir
-    cd "$( dirname "$REPO_CONFIG_DIR" )"
+    cd "$( dirname "$REPO_CONFIG_DIR" )" \
+        || fail "Could not move to the root dir of the course repo."
+
+    # shellcheck source=/dev/null
     . "$commandFile" #"${ARGS[@]}"
 }
 
@@ -659,11 +662,11 @@ app_selfupdate()
     download_file_verify_hash "$url" "$file"
 
     [[ $OPTION_DRY ]] || \
-        DBWEBB_INSTALL_SOURCE="$OPTION_SOURCE_BIN" \
-        DBWEBB_INSTALL_TARGET="$OPTION_TARGET"     \
-        bash < "$file"
+        DBW_INSTALL_SOURCE="$OPTION_SOURCE_BIN" \
+        DBW_INSTALL_TARGET="$OPTION_TARGET"     \
+        bash "$file"
 
-    rm -f "$file" "$file.sha1"
+    #rm -f "$file" "$file.sha1"
 
     # local tmp="/tmp/dbwebb-cli.$$"
     # local tmpSha1="$tmp.sha1"
@@ -711,7 +714,7 @@ Options:
  --source <source>      Source to download installation program.
  --source-bin <install> Source to installation program to download and install.
  --target <target>      Target dir for installation.
- --verbose              Be more verbose in output.
+ --verbose,very-verbose Be more verbose in output.
 
 Help:
  Update the utility to the latest version through an automated
@@ -726,10 +729,10 @@ Help:
  how the test program verifies the installation and it works if you are in
  the root of the development git-repo.
  
- $ $APP_NAME selfupdate          \\
-     --source file:///\$PWD/src/install.bash     \\
-     --source-bin file:///\$PWD/src/dbwebb.bash  \\
-     --target build/bin                          \\
+ $ $APP_NAME selfupdate                           \\
+     --source file://\$PWD/release/latest/install \\
+     --source-bin file://\$PWD/release/latest/dbw \\
+     --target build                               \\
      --force
 " "$1"
 }

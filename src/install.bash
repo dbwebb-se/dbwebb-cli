@@ -67,7 +67,7 @@ $ECHO "$SOURCE"
 if ! curl --silent --output "$TMP" "$SOURCE"; then
     rm -f $TMP
     $ECHO "$MSG_FAILED downloading dbw."
-    $ECHO "I could not download the script from GitHub."
+    $ECHO "I could not download the target application."
     $ECHO "Failed to access: $SOURCE"
     exit 1
 fi

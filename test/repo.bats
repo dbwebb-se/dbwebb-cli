@@ -39,13 +39,13 @@ load test_helper
     # [[ "${lines[0]}" = *"template"* ]]
 }
 
-@test "repo finds command 'gui'" {
-    run src/dbw.bash gui
+@test "repo finds command 'dummy'" {
+    run src/dbw.bash dummy
     (( $status == 0 ))
 }
 
-@test "repo does not find command 'gui_no'" {
-    run src/dbw.bash gui_no
+@test "repo does not find command 'dummy_no'" {
+    run src/dbw.bash dummy_no
     (( $status == 1 ))
 }
 

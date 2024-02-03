@@ -112,7 +112,6 @@ dbw help repo
 
 
 
-<!--
 dbw selfupdate
 ------------------
 
@@ -122,7 +121,6 @@ Update the utility to its latest version, use sudo if needed.
 sudo dbw selfupdate
 ```
 
--->
 
 
 <!--

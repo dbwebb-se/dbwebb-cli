@@ -10,13 +10,14 @@ load test_helper
 }
 
 @test "selfupdate execute and check version" {
-    run src/dbw.bash selfupdate                 \
-        --source file:///$PWD/src/install.bash     \
-        --source-bin file:///$PWD/src/dbw.bash  \
-        --target build/bin
+    install -d build
+    run src/dbw.bash selfupdate                      \
+        --source file://$PWD/release/latest/install  \
+        --source-bin file://$PWD/release/latest/dbw  \
+        --target build
     (( $status == 0 ))
 
-    run build/bin/dbw --version
+    run build/dbw --version
     (( $status == 0 ))
     [[ $( expr "$output" : "v[0-9][0-9.]*" ) ]]
 }
