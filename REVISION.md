@@ -1,6 +1,19 @@
 Revision history
 =================================
 
+
+
+v3.0.0* (2024-02-03)
+---------------------------------
+
+* TODO add github actions
+* TODO installation phase checksum sha1/md5.
+* TODO installation.bash support both curl/wget.
+* TODO add code coverage to CI.
+* TODO add code coverage.
+
+
+
 v3.0.0 (2024-02-03)
 ---------------------------------
 
