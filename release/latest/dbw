@@ -18,7 +18,7 @@ readonly REPO_CONFIG_FILE_DEFAULT=${REPO_CONFIG_FILE_DEFAULT:-".dbw/repo_config.
 #
 version()
 {
-    printf "v3.0.* (2024-02-02)\\n"
+    printf "v3.0.* (2024-02-03)\\n"
 }
 
 
@@ -45,13 +45,18 @@ Commands supported by each course repo:
  <command> [options] [arguments]  Execute command with options and arguments.
 
 Options:
- --dry               Run dry for test, limit what actually is performed.
- --force             Force potential dangerous operation.
  --help, -h          Show info on usage.
- --source <source>   Some commands use source as alternate source.
- --target <target>   Some commands use target as alternate target.
+ --silent            Suppress output.
+ --verbose           Be verbose and print details on whats happening.
  --version, -v       Show details on version.
 " "$APP_NAME"
+
+#  --dry               Run dry for test, limit what actually is performed.
+#  --force             Force potential dangerous operation.
+#  --help, -h          Show info on usage.
+#  --source <source>   Some commands use source as alternate source.
+#  --target <target>   Some commands use target as alternate target.
+
 }
 
 
@@ -106,7 +111,27 @@ verbose()
     color=$(tput setaf 4)
     normal=$(tput sgr0)
 
-    printf "%s $*\\n" "${color}[VERBOSE]${normal}"
+    [[ $OPTION_SILENT ]] \
+        || printf "%s $*\\n" "${color}[VERBOSE]${normal}"
+}
+
+
+
+##
+# Verbose output to show what is being done.
+#
+# @param string $* error message to display.
+#
+doing()
+{
+    local color
+    local normal
+
+    color=$(tput setaf 213)
+    normal=$(tput sgr0)
+
+    [[ $OPTION_SILENT ]] \
+        || printf "%s $*\\n" "${color}[$APP_NAME]${normal}"
 }
 
 
@@ -436,7 +461,9 @@ function repo_command_execute
     [[ -d $REPO_CONFIG_DIR ]] \
         || fail "It is not a valid config dir in this course repo!"
 
-    bash "$commandFile" "${ARGS[@]}"
+    # Always execute from the course repo base dir
+    cd "$( dirname "$REPO_CONFIG_DIR" )"
+    . "$commandFile" #"${ARGS[@]}"
 }
 
 
@@ -622,7 +649,7 @@ Help:
 app_selfupdate()
 {
     local url="${OPTION_SOURCE:-https://raw.githubusercontent.com/dbwebb-se/dbwebb-cli/master/release/latest/install}"
-    local file="/tmp/dbwebb-cli.$$"
+    local file="/tmp/dbw.$$"
 
     download_file_verify_hash "$url" "$file"
 
@@ -666,7 +693,7 @@ app_selfupdate()
 ##
 # Help for the command.
 #
-app_help_selfupdate()
+app_selfupdate_help()
 {
     printf "\
 Usage:
@@ -696,11 +723,8 @@ Help:
  $ $APP_NAME selfupdate          \\
      --source file:///\$PWD/src/install.bash     \\
      --source-bin file:///\$PWD/src/dbwebb.bash  \\
-     --target build/bin                         \\
+     --target build/bin                          \\
      --force
-
-Read more:
- https://dbwebb.se/dbwebb-cli/$1
 " "$1"
 }
 
@@ -754,7 +778,7 @@ main()
             ;;
 
             --silent)
-                #readonly OPTION_SILENT=1
+                readonly OPTION_SILENT=1
                 shift
             ;;
 

@@ -45,13 +45,13 @@ Commands supported by each course repo:
  <command> [options] [arguments]  Execute command with options and arguments.
 
 Options:
- --help, -h          Show info on usage.
- --silent            Suppress output.
- --verbose           Be verbose and print details on whats happening.
- --version, -v       Show details on version.
+ --dry                   Run dry for test, limit what actually is performed.
+ --help, -h              Show info on usage.
+ --silent                Suppress output.
+ --verbose, very-verbose Be verbose and print details on whats happening.
+ --version, -v           Show details on version.
 " "$APP_NAME"
 
-#  --dry               Run dry for test, limit what actually is performed.
 #  --force             Force potential dangerous operation.
 #  --help, -h          Show info on usage.
 #  --source <source>   Some commands use source as alternate source.
@@ -127,7 +127,7 @@ doing()
     local color
     local normal
 
-    color=$(tput setaf 213)
+    color=$(tput setaf 2)
     normal=$(tput sgr0)
 
     [[ $OPTION_SILENT ]] \
@@ -312,8 +312,10 @@ download_file()
     local optionSilent=
 
     if has_command curl; then
-        [[ ! $OPTION_VERBOSE ]] && optionSilent="--silent"
-        [[ $OPTION_VERBOSE ]] && printf "Curl: %s\\n" "$1"
+        [[ ! $OPTION_VERY_VERBOSE ]] \
+            && optionSilent="--silent"
+        [[ $OPTION_VERBOSE ]] \
+            && verbose "Curl: $1"
 
         if ! curl --fail --output "$2" $optionSilent "$1"; then
             rm -f "$2"
@@ -324,6 +326,9 @@ download_file()
     else
         fail "Neither curl or wget seems to be installed on this system. Install any of them."
     fi
+
+    [[ $OPTION_VERBOSE ]] \
+        && verbose "$( ls -l "$2" )"
 }
 
 
@@ -342,17 +347,17 @@ download_file_verify_hash()
     local file="$2"
 
     [[ $OPTION_VERBOSE ]] \
-        && printf "Download '%s' and save as '%s'.\\n" "$url" "$file"
+        && verbose "Download '$url' and save as '$file'."
 
     download_file "$url" "$file"
 
     # if [[ ! $OPTION_FORCE ]]; then
-    #     [[ $OPTION_VERBOSE ]] && \
-    #         printf "Download SHA1 verification: %s.\\n" "$1.sha1"
-    # 
-    #     if ! curl --fail $optionSilent "$1.sha1" > "$2.sha1"; then
-    #         rm -f "$2.sha1"
-    #         fail "Could not download SHA1 for installation program."
+    #     [[ $OPTION_VERBOSE ]] \
+    #         && verbose "Download SHA1 verification: '$1.sha1'"
+    
+    #     if ! download_file "$url.sha1" "$file.sha1"; then
+    #         rm -f "$file" "$file.sha1"
+    #         fail "Could not download SHA1 for the file."
     #     fi
     # fi
 }
@@ -657,7 +662,8 @@ app_selfupdate()
         DBWEBB_INSTALL_SOURCE="$OPTION_SOURCE_BIN" \
         DBWEBB_INSTALL_TARGET="$OPTION_TARGET"     \
         bash < "$file"
-    rm -f "$file"
+
+    rm -f "$file" "$file.sha1"
 
     # local tmp="/tmp/dbwebb-cli.$$"
     # local tmpSha1="$tmp.sha1"
@@ -807,6 +813,12 @@ main()
 
             --verbose)
                 readonly OPTION_VERBOSE=1
+                shift
+            ;;
+
+            --very-verbose)
+                readonly OPTION_VERBOSE=1
+                readonly OPTION_VERY_VERBOSE=1
                 shift
             ;;
 
